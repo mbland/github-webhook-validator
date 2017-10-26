@@ -1,6 +1,6 @@
 {
   "name": "github-webhook-validator",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Express middleware validator for GitHub webhooks",
   "main": "index.js",
   "engines": {
