@@ -1,5 +1,3 @@
-/* jshint node: true */
-
 'use strict'
 
 var bufferEq = require('buffer-equal-constant-time')
@@ -79,14 +77,37 @@ exports.validatePayload = function(rawBody, signature, secretKey) {
   }
 }
 
-exports.ValidationError = function(keyLabel, webhookId, ip) {
-  this.keyLabel = keyLabel
-  this.webhookId = webhookId
-  this.ip = ip
-  this.toString = function() {
-    return 'invalid webhook: ' + [keyLabel, webhookId, ip].join(' ')
-  }
+// ES5-style per Error#ES5_Custom_Error_Object page from
+// https://developer.mozilla.org/.
+function ValidationError(keyLabel, webhookId, ip, fileName, lineno) {
+  var instance = new Error('invalid webhook: ' +
+    [keyLabel, webhookId, ip].join(' '), fileName, lineno)
+
+  instance.keyLabel = keyLabel
+  instance.webhookId = webhookId
+  instance.ip = ip
+
+  Object.setPrototypeOf(instance, Object.getPrototypeOf(this))
+  Error.captureStackTrace(this, ValidationError)
+  return instance
 }
+
+ValidationError.prototype = Object.create(Error.prototype, {
+  constructor: {
+    value: Error,
+    enumberable: false,
+    writable: true,
+    configurable: true
+  }
+})
+
+if (Object.setPrototypeOf) {
+  Object.setPrototypeOf(ValidationError, Error)
+} else {
+  ValidationError.__proto__ = Error
+}
+
+exports.ValidationError = ValidationError
 
 exports.parseKeyLabelFromBranch = function(rawBody) {
   var branchMatch = new RegExp('"ref": ?"refs/heads/([^"]*)"').exec(rawBody)
@@ -105,7 +126,7 @@ exports.middlewareValidator = function(keyDictionary, parseKeyLabelFromBody) {
     var secretKey = keyDictionary[keyLabel] || keyDictionary['<default>']
 
     if (!exports.validatePayload(rawBody, signature, secretKey)) {
-      throw new exports.ValidationError(keyLabel, webhookId, req.ip)
+      throw new ValidationError(keyLabel, webhookId, req.ip)
     }
   }
 }
