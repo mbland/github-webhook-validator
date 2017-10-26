@@ -1,12 +1,15 @@
 # github-webhook-validator
 
-This library provides an [Express](https://www.npmjs.com/package/express)
-middleware validator for [GitHub webhooks](https://developer.github.com/webhooks/)
-that have a secret key defined.
+This library provides an [Express][] middleware validator for [GitHub
+webhooks][] that have a secret key defined.
 
-It was primarily developed for the [`18f-pages-server`
-npm](https://www.npmjs.com/package/18f-pages-server). It enables
-authentication across multiple webhooks handled by the same server.
+[Express]:         https://expressjs.com/
+[GitHub webhooks]: https://developer.github.com/webhooks/
+
+It was primarily developed for the [pages-server][]. It enables authentication
+across multiple webhooks handled by the same server.
+
+[pages-server]: https://github.com/mbland/pages-server
 
 ## Installation
 
@@ -16,8 +19,10 @@ To make this library part of your project:
 $ npm install github-webhook-validator --save
 ```
 
-Note that [Node.js](https://nodejs.org/) version 0.12.7 or higher is required;
-check your installed version with `node -v`.
+Note that [Node.js][] version 4.8.5 or higher is required; check your installed
+version with `node -v`.
+
+[Node.js]: https://nodejs.org/
 
 ## Usage
 
@@ -54,9 +59,10 @@ function doLaunch(config, keyDictionary) {
 
 ### loadKeyDictionary([defaultKeyFile[, builderConfigs[, parseKeyLabelFromConfig]]])
 
-Returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-that will, upon success, resolve to an object comprised of `label: key`
-mappings for use by the middleware validator.
+Returns a [Promise][] that will, upon success, resolve to an object comprised of
+`label: key` mappings for use by the middleware validator.
+
+[Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
 * **defaultKeyFile**: path to the file containing the secret key used to
   validate all payloads by default
@@ -81,9 +87,11 @@ definition.
 ### middlewareValidator(keyDictionary[, parseKeyLabelFromBody])
 
 Returns a function corresponding to the `verify` function interface passed as
-an option to [Express `body-parser` middleware](https://www.npmjs.com/package/body-parser).
-The returned function will abort the request with an error message if
-validation fails, prior to parsing taking place.
+an option to [Express `body-parser` middleware][bp]. The returned function will
+abort the request with an error message if validation fails, prior to parsing
+taking place.
+
+[bp]: https://www.npmjs.com/package/body-parser
 
 * **keyDictionary**: the result from **loadKeyDictionary()**
 * **parseKeyLabelFromBody**: maps the raw contents of the request body to a
@@ -105,30 +113,11 @@ does not exist, _any incoming requests with the `X-Hub-Signature` HTTP header
 will fail validation_. The fix would be to add a default key, to add a
 branch-specific key, or to remove the secret key from the webhook definition.
 
-## Contributing
+### Open Source License
 
-1. Fork the repo (or just clone it if you're an 18F team member)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Make your changes and test them via `npm test` or `gulp test`
-4. Lint your changes with `gulp lint`
-5. Commit your changes (`git commit -am 'Add some feature'`)
-6. Push to the branch (`git push origin my-new-feature`)
-7. Create a new Pull Request
+This software is made available as [Open Source software][oss-def] under the
+[ISC License][].  For the text of the license, see the [LICENSE](LICENSE.md)
+file.
 
-Feel free to [file an issue](https://github.com/18F/github-webhook-validator/issues)
-or to ping [@mbland](https://github.com/mbland) with any questions you may
-have, especially if the current documentation should've addressed your needs,
-but didn't.
-
-## Public domain
-
-This project is in the worldwide [public domain](LICENSE.md). As stated in
-[CONTRIBUTING](CONTRIBUTING.md):
-
-> This project is in the public domain within the United States, and copyright
-> and related rights in the work worldwide are waived through the
-> [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
->
-> All contributions to this project will be released under the CC0 dedication.
-> By submitting a pull request, you are agreeing to comply with this waiver of
-> copyright interest.
+[oss-def]:     https://opensource.org/osd-annotated
+[isc license]: https://www.isc.org/downloads/software-support-policy/isc-license/
