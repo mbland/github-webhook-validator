@@ -170,6 +170,21 @@ describe('PayloadValidator', function() {
     })
   })
 
+  describe('ValidationError', function() {
+    it('should be an Error', function() {
+      try {
+        throw new validator.ValidationError('foobar', 'bazquux', '127.0.0.1')
+      } catch (err) {
+        err.keyLabel.should.equal('foobar')
+        err.webhookId.should.equal('bazquux')
+        err.ip.should.equal('127.0.0.1')
+        err.toString().should.equal('Error: invalid webhook: ' +
+          'foobar bazquux 127.0.0.1')
+        err.should.be.an('Error')
+      }
+    })
+  })
+
   describe('middlewareValidator', function() {
     var payload
     var keyDictionary
